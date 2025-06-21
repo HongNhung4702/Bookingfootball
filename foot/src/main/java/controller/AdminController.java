@@ -354,20 +354,22 @@ public class AdminController {
     @GetMapping("/stadiums")
     public String stadiumList(HttpSession session, Model model) {
         if (!isAdmin(session)) return "redirect:/login";
-        model.addAttribute("username", session.getAttribute("username"));
+
+        List<Stadium> stadiums = stadiumDao.findAll();
+        model.addAttribute("stadiums", stadiums);
         model.addAttribute("pageTitle", "Stadium Management");
         model.addAttribute("contentPage", "admin/stadiums");
-        model.addAttribute("stadiums", stadiumDao.findAll());
         return "layouts/admin_layout";
     }
 
     @GetMapping("/stadiums/add")
     public String addStadiumForm(HttpSession session, Model model) {
         if (!isAdmin(session)) return "redirect:/login";
-        model.addAttribute("username", session.getAttribute("username"));
-        model.addAttribute("pageTitle", "Add Stadium");
-        model.addAttribute("contentPage", "admin/stadium-form");
+
         model.addAttribute("stadium", new Stadium());
+        model.addAttribute("pageTitle", "Add New Stadium");
+        model.addAttribute("contentPage", "admin/stadium-form");
+        model.addAttribute("fieldTypes", Stadium.FieldType.values());
         model.addAttribute("isEdit", false);
         return "layouts/admin_layout";
     }
@@ -375,12 +377,15 @@ public class AdminController {
     @GetMapping("/stadiums/edit/{id}")
     public String editStadiumForm(@PathVariable Long id, HttpSession session, Model model) {
         if (!isAdmin(session)) return "redirect:/login";
-        Stadium s = stadiumDao.findById(id);
-        if (s == null) return "redirect:/admin/stadiums";
-        model.addAttribute("username", session.getAttribute("username"));
+
+        Stadium stadium = stadiumDao.findById(id);
+        if (stadium == null) {
+            return "redirect:/admin/stadiums";
+        }
+        model.addAttribute("stadium", stadium);
         model.addAttribute("pageTitle", "Edit Stadium");
         model.addAttribute("contentPage", "admin/stadium-form");
-        model.addAttribute("stadium", s);
+        model.addAttribute("fieldTypes", Stadium.FieldType.values());
         model.addAttribute("isEdit", true);
         return "layouts/admin_layout";
     }

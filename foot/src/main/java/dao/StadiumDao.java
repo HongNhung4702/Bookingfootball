@@ -62,11 +62,11 @@ public class StadiumDao {
         if (stadium.getId() == null) {
             String sql = "INSERT INTO Stadium (name, address, price_per_hour, description, image_url, field_type, created_at, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql, stadium.getName(), stadium.getAddress(), stadium.getPricePerHour(), 
-                              stadium.getDescription(), stadium.getImageUrl(), stadium.getFieldType().name(), stadium.getCreatedAt(), stadium.isActive());
+                              stadium.getDescription(), stadium.getImageUrl(), stadium.getFieldType().toString(), stadium.getCreatedAt(), stadium.isActive());
         } else {
             String sql = "UPDATE Stadium SET name = ?, address = ?, price_per_hour = ?, description = ?, image_url = ?, field_type = ?, is_active = ? WHERE id = ?";
             jdbcTemplate.update(sql, stadium.getName(), stadium.getAddress(), stadium.getPricePerHour(), 
-                              stadium.getDescription(), stadium.getImageUrl(), stadium.getFieldType().name(), stadium.isActive(), stadium.getId());
+                              stadium.getDescription(), stadium.getImageUrl(), stadium.getFieldType().toString(), stadium.isActive(), stadium.getId());
         }
     }
 

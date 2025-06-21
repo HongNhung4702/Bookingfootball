@@ -20,6 +20,15 @@
                 <input type="number" class="form-control" id="pricePerHour" name="pricePerHour" value="${stadium.pricePerHour}" min="0" step="1000" required>
             </div>
             <div class="mb-3">
+                <label for="fieldType" class="form-label">Field Type</label>
+                <select class="form-select" id="fieldType" name="fieldType" required>
+                    <option value="" disabled ${stadium.fieldType == null ? 'selected' : ''}>-- Select Field Type --</option>
+                    <c:forEach var="type" items="${fieldTypes}">
+                        <option value="${type.name()}" ${stadium.fieldType == type ? 'selected' : ''}>${type}</option>
+                    </c:forEach>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea class="form-control" id="description" name="description" rows="3">${stadium.description}</textarea>
             </div>
