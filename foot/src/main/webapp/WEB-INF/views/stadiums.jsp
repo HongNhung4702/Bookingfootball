@@ -114,7 +114,7 @@
             id: '${stadium.id}',
             name: '${stadium.name}',
             area: '${stadium.area}',
-            fieldType: '${stadium.fieldType}',
+            fieldType: '${stadium.fieldType.toString()}',
             pricePerHour: '${stadium.pricePerHour}',
             address: '${stadium.address}',
             imageUrl: '${stadium.imageUrl}'
@@ -156,9 +156,9 @@
         $stadiumList.empty();
         
         stadiumsData.forEach(function(stadiumData) {
-            var matchArea = !area || stadiumData.area === area;
-            var matchStadium = !stadium || stadiumData.name === stadium;
-            var matchFieldType = !fieldType || stadiumData.fieldType === fieldType;
+            var matchArea = !area || stadiumData.area.trim() === area.trim();
+            var matchStadium = !stadium || stadiumData.name.trim() === stadium.trim();
+            var matchFieldType = !fieldType || stadiumData.fieldType.trim() === fieldType.trim();
             var imgSrc = stadiumData.imageUrl && stadiumData.imageUrl.startsWith('/') ? '${pageContext.request.contextPath}' + stadiumData.imageUrl : stadiumData.imageUrl;
             if (matchArea && matchStadium && matchFieldType) {
                 $stadiumList.append(
@@ -176,7 +176,7 @@
                                     '</p>' +
                                 '</div>' +
                                 '<div class="text-center mt-auto">' +
-                                    '<a href="${pageContext.request.contextPath}/stadiums/' + stadiumData.id + '/book" class="btn btn-primary">Chi tiết</a>' +
+                                    '<a href="${pageContext.request.contextPath}/stadiums/' + stadiumData.id + '/book" class="btn btn-success">Chi tiết</a>' +
                                 '</div>' +
                             '</div>' +
                         '</div>' +

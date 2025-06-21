@@ -6,6 +6,7 @@ import model.Booking;
 import model.Product;
 import model.Category;
 import model.PurchaseOrder;
+import model.UserOrderView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ import service.OrderService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -142,7 +144,7 @@ public class UserController {
                 .sorted()
                 .collect(Collectors.toList());
         List<String> uniqueFieldType = stadiums.stream()
-                .map(Stadium::getFieldType)
+                .map(s -> s.getFieldType().toString())
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
@@ -307,19 +309,13 @@ public class UserController {
         }
 
         try {
-            PurchaseOrder order = orderService.placeOrder(
-                    user,
-                    product,
-                    quantity,
-                    shippingName,
-                    shippingPhone,
-                    shippingAddress
+            orderService.placeOrder(
+                user, product, quantity,
+                shippingName, shippingPhone, shippingAddress
             );
-            model.addAttribute("order", order);
             model.addAttribute("product", product);
-            model.addAttribute("quantity", quantity); // Đảm bảo truyền biến quantity cho JSP
-            model.addAttribute("username", username);
-            model.addAttribute("pageTitle", "Kết quả thanh toán");
+            model.addAttribute("quantity", quantity);
+            model.addAttribute("pageTitle", "Checkout Result");
             model.addAttribute("contentPage", "checkout-result");
             return "layouts/user_layout";
         } catch (IllegalArgumentException ex) {
@@ -332,12 +328,18 @@ public class UserController {
     public String orderHistory(HttpSession session, Model model) {
         String username = (String) session.getAttribute("username");
         if (username == null) return "redirect:/login";
+
         User user = userDao.findByUsername(username);
-        if (user == null) return "redirect:/login";
-        List<PurchaseOrder> orders = orderService.getOrdersByUserId(user.getId());
+        if (user == null) {
+            // Handle user not found appropriately
+            return "redirect:/login";
+        }
+
+        List<UserOrderView> orders = orderService.getUserOrderHistory(user.getId());
+
         model.addAttribute("orders", orders);
         model.addAttribute("username", username);
-        model.addAttribute("pageTitle", "Lịch sử đặt hàng");
+        model.addAttribute("pageTitle", "Lịch Sử Đặt Hàng");
         model.addAttribute("contentPage", "order-history");
         return "layouts/user_layout";
     }

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import model.UserOrderView;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -71,5 +73,9 @@ public class OrderService {
 
     public List<PurchaseOrder> getOrdersByUserId(Long userId) {
         return orderDao.findByUserId(userId);
+    }
+
+    public List<UserOrderView> getUserOrderHistory(Long userId) {
+        return orderDao.findUserOrderViewsByUserId(userId);
     }
 }

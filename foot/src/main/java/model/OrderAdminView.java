@@ -2,6 +2,7 @@ package model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class OrderAdminView {
     // Thông tin đơn hàng
@@ -19,6 +20,36 @@ public class OrderAdminView {
     private Long productId;
     private String productName;
     private int quantity;
+
+    // --- Helper Methods for JSP ---
+    public String getStatusBadgeClass() {
+        if (status == null) return "secondary";
+        switch (status.toUpperCase()) {
+            case "PENDING": return "warning text-dark";
+            case "APPROVED":
+            case "COMPLETED":
+                return "success";
+            case "REJECTED":
+            case "CANCELLED":
+                return "danger";
+            default:
+                return "secondary";
+        }
+    }
+
+    public String getPaymentStatusBadgeClass() {
+        if (paymentStatus == null) return "secondary";
+        switch (paymentStatus.toUpperCase()) {
+            case "PAID": return "success";
+            case "UNPAID": return "warning text-dark";
+            default: return "secondary";
+        }
+    }
+
+    public String getFormattedCreatedAt() {
+        if (createdAt == null) return "-";
+        return createdAt.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+    }
 
     // Getters & Setters
     public Long getOrderId() { return orderId; }

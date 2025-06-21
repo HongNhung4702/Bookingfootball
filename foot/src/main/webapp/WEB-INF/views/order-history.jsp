@@ -30,39 +30,22 @@
                                     <th>Mã đơn</th>
                                     <th>Ngày đặt</th>
                                     <th>Người nhận</th>
-                                    <th>SĐT</th>
                                     <th>Địa chỉ</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Số lượng</th>
                                     <th>Tổng tiền</th>
-                                    <th>Trạng thái</th>
-                                    <th>Thanh toán</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach var="order" items="${orders}">
                                     <tr>
-                                        <td><span class="badge bg-secondary">#${order.id}</span></td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${order.createdAt != null}">
-                                                    ${order.createdAt.toString().replace('T', ' ').substring(0, 16)}
-                                                </c:when>
-                                                <c:otherwise>-</c:otherwise>
-                                            </c:choose>
-                                        </td>
+                                        <td><span class="badge bg-secondary">#${order.orderId}</span></td>
+                                        <td>${order.formattedOrderDate}</td>
                                         <td>${order.shippingName}</td>
-                                        <td>${order.shippingPhone}</td>
                                         <td>${order.shippingAddress}</td>
-                                        <td><span class="badge bg-success"><fmt:formatNumber value="${order.totalAmount}" pattern="#.##"/> VNĐ</span></td>
-                                        <td>
-                                            <span class="badge bg-${order.status == 'PENDING' ? 'warning text-dark' : (order.status == 'APPROVED' ? 'success' : (order.status == 'REJECTED' ? 'danger' : 'secondary'))}">
-                                                ${order.status}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-${order.paymentStatus == 'PAID' ? 'success' : 'secondary'}">
-                                                ${order.paymentStatus == 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}
-                                            </span>
-                                        </td>
+                                        <td>${order.productName}</td>
+                                        <td>${order.quantity}</td>
+                                        <td><span class="badge bg-success"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ</span></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

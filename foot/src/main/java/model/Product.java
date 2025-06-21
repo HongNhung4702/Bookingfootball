@@ -12,6 +12,7 @@ public class Product {
     private Long categoryId;
     private String imageUrl;
     private LocalDateTime createdAt = LocalDateTime.now();
+    private boolean isActive = true;
 
     // Getters and Setters
     public Long getId() {
@@ -76,6 +77,14 @@ public class Product {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
     
     // Helper method for JSP to format the date

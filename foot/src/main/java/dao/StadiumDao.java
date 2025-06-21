@@ -27,35 +27,51 @@ public class StadiumDao {
             stadium.setDescription(rs.getString("description"));
             stadium.setImageUrl(rs.getString("image_url"));
             stadium.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            
+            String fieldTypeStr = rs.getString("field_type");
+            if (fieldTypeStr != null) {
+                try {
+                    stadium.setFieldType(Stadium.FieldType.valueOf(fieldTypeStr.replace(" ", "_").toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    // Handle cases where the string from DB doesn't match enum constants
+                    System.err.println("Invalid field_type value from DB: " + fieldTypeStr);
+                    stadium.setFieldType(null); // Or set a default
+                }
+            }
+            try {
+                stadium.setActive(rs.getBoolean("is_active"));
+            } catch (SQLException e) {
+                stadium.setActive(true);
+            }
             return stadium;
         }
     }
 
     public List<Stadium> findAll() {
-        String sql = "SELECT * FROM Stadium ORDER BY created_at DESC";
+        String sql = "SELECT * FROM Stadium WHERE is_active = TRUE ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, new StadiumRowMapper());
     }
 
     public Stadium findById(Long id) {
-        String sql = "SELECT * FROM Stadium WHERE id = ?";
+        String sql = "SELECT * FROM Stadium WHERE id = ? AND is_active = TRUE";
         List<Stadium> stadiums = jdbcTemplate.query(sql, new StadiumRowMapper(), id);
         return stadiums.isEmpty() ? null : stadiums.get(0);
     }
 
     public void save(Stadium stadium) {
         if (stadium.getId() == null) {
-            String sql = "INSERT INTO Stadium (name, address, price_per_hour, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Stadium (name, address, price_per_hour, description, image_url, field_type, created_at, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql, stadium.getName(), stadium.getAddress(), stadium.getPricePerHour(), 
-                              stadium.getDescription(), stadium.getImageUrl(), stadium.getCreatedAt());
+                              stadium.getDescription(), stadium.getImageUrl(), stadium.getFieldType().name(), stadium.getCreatedAt(), stadium.isActive());
         } else {
-            String sql = "UPDATE Stadium SET name = ?, address = ?, price_per_hour = ?, description = ?, image_url = ? WHERE id = ?";
+            String sql = "UPDATE Stadium SET name = ?, address = ?, price_per_hour = ?, description = ?, image_url = ?, field_type = ?, is_active = ? WHERE id = ?";
             jdbcTemplate.update(sql, stadium.getName(), stadium.getAddress(), stadium.getPricePerHour(), 
-                              stadium.getDescription(), stadium.getImageUrl(), stadium.getId());
+                              stadium.getDescription(), stadium.getImageUrl(), stadium.getFieldType().name(), stadium.isActive(), stadium.getId());
         }
     }
 
     public void deleteById(Long id) {
-        String sql = "DELETE FROM Stadium WHERE id = ?";
+        String sql = "UPDATE Stadium SET is_active = FALSE WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 }

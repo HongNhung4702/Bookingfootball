@@ -11,6 +11,25 @@ public class Stadium {
     private String description;
     private String imageUrl;
     private LocalDateTime createdAt = LocalDateTime.now();
+    private FieldType fieldType;
+    private boolean isActive = true;
+
+    public enum FieldType {
+        SÂN_5("Sân 5"),
+        SÂN_7("Sân 7"),
+        SÂN_11("Sân 11");
+
+        private final String displayName;
+
+        FieldType(String displayName) {
+            this.displayName = displayName;
+        }
+
+        @Override
+        public String toString() {
+            return displayName;
+        }
+    }
 
     // Getters and Setters
     public Long getId() {
@@ -68,7 +87,24 @@ public class Stadium {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-      // Helper method for JSP to format the date
+
+    public FieldType getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(FieldType fieldType) {
+        this.fieldType = fieldType;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    // Helper method for JSP to format the date
     public String getFormattedCreatedAt() {
         if (createdAt != null) {
             return createdAt.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -89,10 +125,5 @@ public class Stadium {
             }
         }
         return "Không xác định";
-    }
-    
-    // Helper method for field type - for now return a default value
-    public String getFieldType() {
-        return "Sân 11 người"; // Default field type
     }
 }
