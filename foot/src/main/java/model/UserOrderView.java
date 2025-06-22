@@ -13,6 +13,7 @@ public class UserOrderView {
     private String productName;
     private int quantity;
     private BigDecimal totalAmount;
+    private String size;
 
     // Getters and Setters
     public Long getOrderId() {
@@ -84,5 +85,13 @@ public class UserOrderView {
             return orderDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
         return "";
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 } 

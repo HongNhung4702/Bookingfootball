@@ -20,6 +20,7 @@ public class OrderAdminView {
     private Long productId;
     private String productName;
     private int quantity;
+    private String size;
 
     // --- Helper Methods for JSP ---
     public String getStatusBadgeClass() {
@@ -87,4 +88,7 @@ public class OrderAdminView {
 
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    public String getSize() { return size; }
+    public void setSize(String size) { this.size = size; }
 } 

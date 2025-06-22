@@ -27,7 +27,8 @@ public class OrderService {
                                     int quantity,
                                     String shippingName,
                                     String shippingPhone,
-                                    String shippingAddress) {
+                                    String shippingAddress,
+                                    String size) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Số lượng phải lớn hơn 0");
         }
@@ -36,10 +37,7 @@ public class OrderService {
         }
 
         // --- tính giá ---
-        // giả sử product.getPrice() trả về double:
         BigDecimal unitPrice = BigDecimal.valueOf(product.getPrice());
-        // nếu đã là BigDecimal thì: BigDecimal unitPrice = product.getPrice();
-
         BigDecimal totalAmount = unitPrice.multiply(BigDecimal.valueOf(quantity));
 
         // --- tạo PurchaseOrder ---
@@ -66,6 +64,7 @@ public class OrderService {
         detail.setProductId(product.getId());
         detail.setQuantity(quantity);
         detail.setUnitPrice(unitPrice);
+        detail.setSize(size);
         detailDao.create(detail);
 
         return order;

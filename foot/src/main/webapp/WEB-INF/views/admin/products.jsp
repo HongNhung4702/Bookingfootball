@@ -68,7 +68,7 @@
                         </c:forEach>
                     </td>
                     <td>
-                        <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="$"/>
+                        <span class="fw-bold"><fmt:formatNumber value="${product.price}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ</span>
                     </td>
                     <td>
                         <c:choose>

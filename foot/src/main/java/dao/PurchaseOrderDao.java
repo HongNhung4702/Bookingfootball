@@ -70,7 +70,7 @@ public class PurchaseOrderDao {
     public List<UserOrderView> findUserOrderViewsByUserId(Long userId) {
         String sql = "SELECT po.id as order_id, po.created_at as order_date, " +
                      "po.shipping_name, po.shipping_phone, po.shipping_address, " +
-                     "p.name as product_name, od.quantity, od.unit_price " +
+                     "p.name as product_name, od.quantity, od.unit_price, od.size " +
                      "FROM purchaseorder po " +
                      "JOIN orderdetail od ON po.id = od.purchase_order_id " +
                      "JOIN product p ON od.product_id = p.id " +
@@ -85,6 +85,7 @@ public class PurchaseOrderDao {
             view.setShippingAddress(rs.getString("shipping_address"));
             view.setProductName(rs.getString("product_name"));
             view.setQuantity(rs.getInt("quantity"));
+            view.setSize(rs.getString("size"));
             // Calculate total amount for the order detail line
             view.setTotalAmount(rs.getBigDecimal("unit_price").multiply(java.math.BigDecimal.valueOf(rs.getInt("quantity"))));
             return view;

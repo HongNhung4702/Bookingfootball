@@ -295,6 +295,7 @@ public class UserController {
                                   @RequestParam String shippingName,
                                   @RequestParam String shippingPhone,
                                   @RequestParam String shippingAddress,
+                                  @RequestParam(required = false) String size,
                                   HttpSession session,
                                   Model model,
                                   RedirectAttributes ra) {
@@ -311,7 +312,7 @@ public class UserController {
         try {
             orderService.placeOrder(
                 user, product, quantity,
-                shippingName, shippingPhone, shippingAddress
+                shippingName, shippingPhone, shippingAddress, size
             );
             model.addAttribute("product", product);
             model.addAttribute("quantity", quantity);

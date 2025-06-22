@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <div class="container mt-4">
     <!-- Filter Bar -->
     <div class="row mb-4">
@@ -72,27 +73,25 @@
                     <c:forEach var="stadium" items="${stadiums}">
                         <div class="col-md-4 mb-4">
                             <div class="card h-100">
-                            <c:choose>
-                                <c:when test="${stadium.imageUrl != null && stadium.imageUrl.startsWith('/')}" >
-                                    <img src="${pageContext.request.contextPath}${stadium.imageUrl}" class="card-img-top" alt="${stadium.name}" style="height: 150px; object-fit: cover;">
-                                </c:when>
-                                <c:otherwise>
-                                    <img src="${stadium.imageUrl}" class="card-img-top" alt="${stadium.name}" style="height: 150px; object-fit: cover;">
-                                </c:otherwise>
-                            </c:choose>
-                                <div class="card-body d-flex flex-column justify-content-between">
-                                    <div>
-                                        <h5 class="card-title">${stadium.name}</h5>
-                                        <p class="card-text">
-                                            <i class="bi bi-currency-dollar me-2"></i> ${stadium.pricePerHour} VNĐ/giờ
-                                        </p>
-                                        <p class="card-text">
-                                            <i class="bi bi-geo-alt-fill me-2"></i> ${stadium.address}
-                                        </p>
-                                    </div>
-                                    <div class="text-center mt-auto">
-                                        <a href="<c:url value='/stadiums/${stadium.id}/book'/>" class="btn btn-success">Chi tiết</a>
-                                    </div>
+                                <c:choose>
+                                    <c:when test="${stadium.imageUrl != null && stadium.imageUrl.startsWith('/')}" >
+                                        <img src="${pageContext.request.contextPath}${stadium.imageUrl}" class="card-img-top" alt="${stadium.name}" style="height: 150px; object-fit: cover;">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="${stadium.imageUrl}" class="card-img-top" alt="${stadium.name}" style="height: 150px; object-fit: cover;">
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="card-body">
+                                    <h5 class="card-title">${stadium.name}</h5>
+                                    <p class="card-text">
+                                        <i class="fas fa-money-bill-wave me-2"></i> <fmt:formatNumber value="${stadium.pricePerHour}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ/giờ
+                                    </p>
+                                    <p class="card-text">
+                                        <i class="fas fa-map-marker-alt me-2"></i> ${stadium.address}
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0">
+                                    <a href="<c:url value='/stadiums/${stadium.id}/book'/>" class="btn btn-success">Chi tiết</a>
                                 </div>
                             </div>
                         </div>
@@ -120,7 +119,8 @@
             imageUrl: '${stadium.imageUrl}'
         }<c:if test="${!status.last}">,</c:if>
         </c:forEach>
-    ];    function updateStadiums() {
+    ];
+    function updateStadiums() {
         var selectedArea = $("#areaFilter").val();
         var $stadiumFilter = $("#stadiumFilter");
         $stadiumFilter.empty().append("<option value=''>Chọn tên sân</option>").prop("disabled", true);
@@ -159,27 +159,27 @@
             var matchArea = !area || stadiumData.area.trim() === area.trim();
             var matchStadium = !stadium || stadiumData.name.trim() === stadium.trim();
             var matchFieldType = !fieldType || stadiumData.fieldType.trim() === fieldType.trim();
-            var imgSrc = stadiumData.imageUrl && stadiumData.imageUrl.startsWith('/') ? '${pageContext.request.contextPath}' + stadiumData.imageUrl : stadiumData.imageUrl;
+
             if (matchArea && matchStadium && matchFieldType) {
+                var imgSrc = stadiumData.imageUrl && stadiumData.imageUrl.startsWith('/') ? '${pageContext.request.contextPath}' + stadiumData.imageUrl : stadiumData.imageUrl;
+
                 $stadiumList.append(
                     '<div class="col-md-4 mb-4">' +
-                        '<div class="card h-100">' +
-                            '<img src="' + imgSrc + '" class="card-img-top" alt="' + stadiumData.name + '" style="height: 150px; object-fit: cover;">' +
-                            '<div class="card-body d-flex flex-column justify-content-between">' +
-                                '<div>' +
-                                    '<h5 class="card-title">' + stadiumData.name + '</h5>' +
-                                    '<p class="card-text">' +
-                                        '<i class="bi bi-currency-dollar me-2"></i> ' + stadiumData.pricePerHour + ' VNĐ/giờ' +
-                                    '</p>' +
-                                    '<p class="card-text">' +
-                                        '<i class="bi bi-geo-alt-fill me-2"></i> ' + stadiumData.address +
-                                    '</p>' +
-                                '</div>' +
-                                '<div class="text-center mt-auto">' +
-                                    '<a href="${pageContext.request.contextPath}/stadiums/' + stadiumData.id + '/book" class="btn btn-success">Chi tiết</a>' +
-                                '</div>' +
-                            '</div>' +
-                        '</div>' +
+                    '<div class="card h-100">' +
+                    '<img src="' + imgSrc + '" class="card-img-top" alt="' + stadiumData.name + '" style="height: 150px; object-fit: cover;">' +
+                    '<div class="card-body">' +
+                    '<h5 class="card-title">' + stadiumData.name + '</h5>' +
+                    '<p class="card-text">' +
+                    '<i class="fas fa-money-bill-wave me-2"></i> ' + stadiumData.pricePerHour + ' VNĐ/giờ' +
+                    '</p>' +
+                    '<p class="card-text">' +
+                    '<i class="fas fa-map-marker-alt me-2"></i> ' + stadiumData.address +
+                    '</p>' +
+                    '</div>' +
+                    '<div class="card-footer bg-transparent border-0">' +
+                    '<a href="${pageContext.request.contextPath}/stadiums/' + stadiumData.id + '/book" class="btn btn-success">Chi tiết</a>' +
+                    '</div>' +
+                    '</div>' +
                     '</div>'
                 );
             }

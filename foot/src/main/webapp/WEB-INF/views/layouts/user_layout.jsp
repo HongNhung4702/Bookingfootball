@@ -64,10 +64,33 @@
 
     <main class="container my-4">
         <jsp:include page="/WEB-INF/views/${contentPage}.jsp"/>
-    </main>    <footer class="bg-light text-center py-3 mt-auto">
-        <p class="mb-0">
-            <i class="fas fa-futbol text-success"></i> FootballBooking © 2025
-        </p>
+    </main>
+    <footer class="bg-light pt-4 pb-3 mt-auto border-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7 mb-3">
+                    <h5 class="text-uppercase fw-bold mb-3">
+                        <i class="fas fa-futbol text-success"></i> Giới thiệu
+                    </h5>
+                    <p class="text-muted">
+                        FootballBooking là nền tảng đặt sân và mua sắm dụng cụ bóng đá hàng đầu, ra đời với sứ mệnh kết nối những người yêu thể thao. Chúng tôi cung cấp một hệ thống đặt sân tiện lợi, nhanh chóng cùng những sản phẩm thể thao chất lượng, giúp bạn lan tỏa niềm đam mê sân cỏ.
+                    </p>
+                </div>
+                <div class="col-md-5 mb-3">
+                    <h5 class="text-uppercase fw-bold mb-3">Liên hệ</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt fa-fw me-2"></i>170 An Dương Vương, Quy Nhơn, Bình Định</li>
+                        <li class="mb-2"><i class="fas fa-envelope fa-fw me-2"></i>bookingfootball@gmail.com</li>
+                        <li class="mb-2"><i class="fas fa-phone fa-fw me-2"></i>0334455678</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center text-muted pt-2 mt-2 border-top">
+                 <p class="mb-0">
+                    <i class="fas fa-futbol text-success"></i> FootballBooking © 2025
+                </p>
+            </div>
+        </div>
     </footer>
 
     <!-- Bootstrap JS -->

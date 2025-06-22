@@ -8,6 +8,7 @@ public class OrderDetail {
     private Long productId;
     private int quantity;
     private BigDecimal unitPrice;
+    private String size;
 
     // getters & setters
     public Long getId() { return id; }
@@ -24,4 +25,7 @@ public class OrderDetail {
 
     public BigDecimal getUnitPrice() { return unitPrice; }
     public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
+
+    public String getSize() { return size; }
+    public void setSize(String size) { this.size = size; }
 }

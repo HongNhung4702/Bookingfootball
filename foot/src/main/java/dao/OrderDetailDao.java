@@ -18,14 +18,15 @@ public class OrderDetailDao {
     public int create(OrderDetail detail) {
         String sql =
                 "INSERT INTO OrderDetail " +
-                        "(purchase_order_id, product_id, quantity, unit_price) " +
-                        "VALUES (?, ?, ?, ?)";
+                        "(purchase_order_id, product_id, quantity, unit_price, size) " +
+                        "VALUES (?, ?, ?, ?, ?)";
         return jdbcTemplate.update(
                 sql,
                 detail.getPurchaseOrderId(),
                 detail.getProductId(),
                 detail.getQuantity(),
-                detail.getUnitPrice()
+                detail.getUnitPrice(),
+                detail.getSize()
         );
     }
 }

@@ -49,14 +49,14 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price ($) <span class="text-danger">*</span></label>
+                                <label for="price" class="form-label">Giá (VND) <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="price" name="price" 
-                                       value="${product.price}" min="0" step="0.01" required>
+                                       value="${product.price}" min="0" step="1000" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="stock" class="form-label">Stock Quantity <span class="text-danger">*</span></label>
+                                <label for="stock" class="form-label">Số lượng trong kho <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="stock" name="stock" 
                                        value="${product.stock}" min="0" required>
                             </div>
@@ -64,15 +64,17 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">Mô tả</label>
                         <textarea class="form-control" id="description" name="description" 
                                   rows="3" maxlength="1000">${product.description}</textarea>
-                        <div class="form-text">Optional product description (max 1000 characters)</div>
-                    </div>                    <div class="mb-3">
-                        <label for="imageFile" class="form-label">Product Image</label>
+                        <div class="form-text">Mô tả tùy chọn cho sản phẩm (tối đa 1000 ký tự)</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="imageFile" class="form-label">Ảnh sản phẩm</label>
                         <input type="file" class="form-control" id="imageFile" name="imageFile" 
                                accept="image/*" onchange="previewImage(this)">
-                        <div class="form-text">Upload an image file (JPG, PNG, GIF). Maximum size: 5MB</div>
+                        <div class="form-text">Tải lên tệp hình ảnh (JPG, PNG, GIF). Kích thước tối đa: 5MB</div>
                         
                         <!-- Image Preview -->
                         <div id="imagePreviewContainer" class="mt-3" style="display: none;">

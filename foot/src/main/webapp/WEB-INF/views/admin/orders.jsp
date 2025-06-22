@@ -34,6 +34,7 @@
                                 <th>Order ID</th>
                                 <th>Customer</th>
                                 <th>Product</th>
+                                <th>Size</th>
                                 <th>Total</th>
                                 <th>Payment</th>
                                 <th>Status</th>
@@ -57,9 +58,10 @@
                                             <br><small class="text-muted">Qty: ${order.quantity}</small>
                                         </div>
                                     </td>
+                                    <td>${order.size}</td>
                                     <td>
-                                        <span class="fw-bold">
-                                            <fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                                        <span class="fw-bold text-success">
+                                            <fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ
                                         </span>
                                     </td>
                                     <td>

@@ -37,6 +37,14 @@
                    placeholder="Nhập địa chỉ giao hàng"
                    required />
         </div>
+        <div class="mb-3">
+            <label for="size" class="form-label">Size (nếu có)</label>
+            <input type="text"
+                   id="size"
+                   name="size"
+                   class="form-control"
+                   placeholder="Nhập size sản phẩm (ví dụ: S, M, L, XL, 39, 40...)" />
+        </div>
 
         <button type="submit" class="btn btn-success">Xác nhận đặt hàng</button>
     </form>

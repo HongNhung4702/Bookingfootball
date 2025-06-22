@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div class="container mt-4">
     <div class="row">
@@ -41,7 +42,7 @@
                                 <p class="card-text mb-2">
                                         ${fn:substring(product.description, 0, 50)}...
                                 </p>
-                                <p class="mt-auto"><strong>${product.price} $</strong></p>
+                                <p class="mt-auto fw-bold text-danger"><fmt:formatNumber value="${product.price}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ</p>
                                 <a
                                         href="<c:url value='/product/${product.id}'/>"
                                         class="btn btn-success btn-block"

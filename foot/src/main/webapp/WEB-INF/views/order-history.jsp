@@ -32,6 +32,7 @@
                                     <th>Người nhận</th>
                                     <th>Địa chỉ</th>
                                     <th>Tên sản phẩm</th>
+                                    <th>Size</th>
                                     <th>Số lượng</th>
                                     <th>Tổng tiền</th>
                                 </tr>
@@ -44,6 +45,7 @@
                                         <td>${order.shippingName}</td>
                                         <td>${order.shippingAddress}</td>
                                         <td>${order.productName}</td>
+                                        <td>${order.size}</td>
                                         <td>${order.quantity}</td>
                                         <td><span class="badge bg-success"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ</span></td>
                                     </tr>

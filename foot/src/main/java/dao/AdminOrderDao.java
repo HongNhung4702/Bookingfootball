@@ -20,7 +20,7 @@ public class AdminOrderDao {
                 "SELECT o.id AS order_id, u.full_name AS userName, " +
                 "  o.shipping_name, o.shipping_phone, o.shipping_address, " +
                 "  o.total_amount, o.status, o.payment_status, o.created_at, " +
-                "  od.product_id, p.name AS product_name, od.quantity " +
+                "  od.product_id, p.name AS product_name, od.quantity, od.size " +
                 "FROM purchaseorder o " +
                 "JOIN user u ON o.user_id = u.id " +
                 "JOIN orderdetail od ON o.id = od.purchase_order_id " +
@@ -43,6 +43,7 @@ public class AdminOrderDao {
                 v.setProductId(rs.getLong("product_id"));
                 v.setProductName(rs.getString("product_name"));
                 v.setQuantity(rs.getInt("quantity"));
+                v.setSize(rs.getString("size"));
                 return v;
             }
         });

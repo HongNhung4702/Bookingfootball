@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div class="container mt-4">
     <div class="row">
@@ -13,7 +14,7 @@
         <div class="col-md-6">
             <h2>${product.name}</h2>
             <p>${product.description}</p>
-            <p><strong>Giá:</strong> ${product.price} $</p>
+            <p><strong>Giá:</strong> <span class="text-danger fw-bold"><fmt:formatNumber value="${product.price}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ</span></p>
             <p><strong>Kho còn:</strong> ${product.stock}</p>
 
             <form action="<c:url value='/checkout'/>" method="get" class="mt-4">
