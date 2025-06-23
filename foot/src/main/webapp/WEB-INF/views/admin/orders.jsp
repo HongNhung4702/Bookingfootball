@@ -17,6 +17,21 @@
         <h5 class="mb-0">
             <i class="fas fa-list me-2"></i>Orders List
         </h5>
+        <form class="row g-2 mt-2" method="get" action="${pageContext.request.contextPath}/admin/orders">
+            <div class="col-auto">
+                <input type="number" min="1" max="31" class="form-control" name="day" placeholder="Day" value="${filterDay != null ? filterDay : ''}">
+            </div>
+            <div class="col-auto">
+                <input type="number" min="1" max="12" class="form-control" name="month" placeholder="Month" value="${filterMonth != null ? filterMonth : ''}">
+            </div>
+            <div class="col-auto">
+                <input type="number" min="2000" max="2100" class="form-control" name="year" placeholder="Year" value="${filterYear != null ? filterYear : ''}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                <a href="${pageContext.request.contextPath}/admin/orders" class="btn btn-secondary">Reset</a>
+            </div>
+        </form>
     </div>
     <div class="card-body p-0">
         <c:choose>
@@ -39,7 +54,6 @@
                                 <th>Payment</th>
                                 <th>Status</th>
                                 <th>Created At</th>
-                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,12 +89,6 @@
                                         </span>
                                     </td>
                                     <td>${order.formattedCreatedAt}</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                             <button class="btn btn-sm btn-outline-primary" title="View Details"><i class="fas fa-eye"></i></button>
-                                             <button class="btn btn-sm btn-outline-secondary" title="Edit Order"><i class="fas fa-edit"></i></button>
-                                        </div>
-                                    </td>
                                 </tr>
                             </c:forEach>
                         </tbody>

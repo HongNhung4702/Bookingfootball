@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -52,7 +54,9 @@ public class BookingService {
 
     public List<Object[]> getPendingBookingsWithDetails() {
         return bookingDao.findBookingsWithDetailsByStatus(Booking.Status.PENDING);
-    }    @Transactional
+    }
+
+    @Transactional
     public void createBooking(Booking booking) {
         System.out.println("BookingService.createBooking - Input booking: " + 
                           "id=" + booking.getId() +
@@ -69,6 +73,18 @@ public class BookingService {
                 throw new IllegalArgumentException("Giờ kết thúc phải sau giờ bắt đầu");
             }
         }
+
+        // Check for overlapping bookings
+        List<Booking> overlappingBookings = bookingDao.findOverlappingBookings(
+            booking.getStadiumId(),
+            booking.getBookingDate(),
+            booking.getStartTime(),
+            booking.getEndTime()
+        );
+
+        if (!overlappingBookings.isEmpty()) {
+            throw new IllegalStateException("Khung giờ này đã được đặt. Vui lòng chọn khung giờ khác.");
+        }
         
         if (booking.getStatus() == null) {
             booking.setStatus(Booking.Status.PENDING);
@@ -80,5 +96,14 @@ public class BookingService {
         
         booking.setId(null);
         bookingDao.save(booking);
+    }
+
+    public List<Booking> getBookingsByStadiumAndDate(Long stadiumId, LocalDate date) {
+        return bookingDao.findBookingsByStadiumAndDate(stadiumId, date);
+    }
+
+    public boolean isTimeSlotAvailable(Long stadiumId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        List<Booking> overlappingBookings = bookingDao.findOverlappingBookings(stadiumId, date, startTime, endTime);
+        return overlappingBookings.isEmpty();
     }
 }

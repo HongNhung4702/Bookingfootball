@@ -63,20 +63,27 @@ public class AdminController {
 
     // ===== ORDER MANAGEMENT =====
     @GetMapping("/orders")
-    public String orderList(HttpSession session, Model model) {
+    public String orderList(@RequestParam(value = "day", required = false) Integer day,
+                            @RequestParam(value = "month", required = false) Integer month,
+                            @RequestParam(value = "year", required = false) Integer year,
+                            HttpSession session, Model model) {
         if (!isAdmin(session)) {
             return "redirect:/login";
         }
-
-        // Lấy tất cả đơn hàng kèm thông tin sản phẩm
-        List<OrderAdminView> orders = adminOrderService.listAllOrders();
-
+        List<OrderAdminView> orders;
+        if (day != null || month != null || year != null) {
+            orders = adminOrderService.listOrdersByDateFilter(day, month, year);
+        } else {
+            orders = adminOrderService.listAllOrders();
+        }
         model.addAttribute("username", session.getAttribute("username"));
         model.addAttribute("pageTitle", "Order Management");
         model.addAttribute("contentPage", "admin/orders");
         model.addAttribute("orders", orders);
-        model.addAttribute("dateFormatter", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
+        model.addAttribute("dateFormatter", java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        model.addAttribute("filterDay", day);
+        model.addAttribute("filterMonth", month);
+        model.addAttribute("filterYear", year);
         return "layouts/admin_layout";
     }
 

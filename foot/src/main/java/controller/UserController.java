@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 
 import dao.UserDao;
 import dao.StadiumDao;
@@ -27,6 +28,8 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 public class UserController {
@@ -105,19 +108,26 @@ public class UserController {
     /*** HOME ***/
     @GetMapping("/home")
     public String home(@RequestParam(value = "categoryId", required = false) Long categoryId,
+                       @RequestParam(value = "search", required = false) String search,
                        HttpSession session,
                        Model model) {
         String username = (String) session.getAttribute("username");
         if (username == null) return "redirect:/login";
 
         List<Category> categories = productService.getAllCategories();
-        List<Product> products = (categoryId != null)
-                ? productService.getProductsByCategory(categoryId)
-                : productService.getAllProducts();
+        List<Product> products;
+        if (search != null && !search.trim().isEmpty()) {
+            products = productService.searchProductsByName(search.trim());
+        } else if (categoryId != null) {
+            products = productService.getProductsByCategory(categoryId);
+        } else {
+            products = productService.getAllProducts();
+        }
 
         model.addAttribute("categories", categories);
         model.addAttribute("products", products);
         model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("search", search);
 
         model.addAttribute("username", username);
         model.addAttribute("pageTitle", "Home");
@@ -216,7 +226,13 @@ public class UserController {
 
         User user = userDao.findByUsername(username);
         List<Booking> bookings = bookingDao.findByUserId(user.getId());
+        List<Stadium> stadiums = stadiumDao.findAll();
+        Map<Long, String> stadiumNames = new HashMap<>();
+        for (Stadium s : stadiums) {
+            stadiumNames.put(s.getId(), s.getName());
+        }
         model.addAttribute("bookings", bookings);
+        model.addAttribute("stadiumNames", stadiumNames);
         model.addAttribute("username", username);
         model.addAttribute("pageTitle", "Lịch Sử Đặt Sân");
         model.addAttribute("contentPage", "my-bookings");
@@ -258,7 +274,7 @@ public class UserController {
 
         Product product = productService.getProductById(id);
         if (product == null) return "redirect:/home";
-
+        
         model.addAttribute("product", product);
         model.addAttribute("username", username);
         model.addAttribute("pageTitle", product.getName());
@@ -281,6 +297,7 @@ public class UserController {
             ra.addFlashAttribute("error", "Sản phẩm không tồn tại");
             return "redirect:/home";
         }
+
         model.addAttribute("product", product);
         model.addAttribute("quantity", quantity);
         model.addAttribute("username", username);
@@ -310,10 +327,11 @@ public class UserController {
         }
 
         try {
-            orderService.placeOrder(
+            PurchaseOrder order = orderService.placeOrder(
                 user, product, quantity,
                 shippingName, shippingPhone, shippingAddress, size
             );
+            model.addAttribute("order", order);
             model.addAttribute("product", product);
             model.addAttribute("quantity", quantity);
             model.addAttribute("pageTitle", "Checkout Result");
@@ -343,6 +361,59 @@ public class UserController {
         model.addAttribute("pageTitle", "Lịch Sử Đặt Hàng");
         model.addAttribute("contentPage", "order-history");
         return "layouts/user_layout";
+    }
+
+    @GetMapping("/api/bookings/check-availability")
+    @ResponseBody
+    public ResponseEntity<?> checkAvailability(
+            @RequestParam Long stadiumId,
+            @RequestParam String date) {
+        try {
+            LocalDate bookingDate = LocalDate.parse(date);
+            List<Booking> bookings = bookingService.getBookingsByStadiumAndDate(stadiumId, bookingDate);
+            
+            return ResponseEntity.ok(bookings.stream()
+                .filter(b -> b.getStatus() != Booking.Status.CANCELLED)
+                .map(b -> {
+                    Map<String, String> slot = new HashMap<>();
+                    slot.put("startTime", b.getStartTime().toString());
+                    slot.put("endTime", b.getEndTime().toString());
+                    return slot;
+                })
+                .collect(Collectors.toList()));
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @PostMapping("/order-history/delete/{id}")
+    public String deleteOrderHistory(@PathVariable Long id, HttpSession session, RedirectAttributes ra) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) return "redirect:/login";
+        User user = userDao.findByUsername(username);
+        try {
+            orderService.deleteOrderForUser(id, user.getId());
+            ra.addFlashAttribute("success", "Đã xóa đơn hàng khỏi lịch sử!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Lỗi khi xóa: " + e.getMessage());
+        }
+        return "redirect:/order-history";
+    }
+
+    @PostMapping("/order-history/delete-all")
+    public String deleteAllOrderHistory(HttpSession session, RedirectAttributes ra) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) return "redirect:/login";
+        User user = userDao.findByUsername(username);
+        try {
+            orderService.deleteAllOrdersForUser(user.getId());
+            ra.addFlashAttribute("success", "Đã xóa toàn bộ lịch sử đơn hàng!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Lỗi khi xóa tất cả: " + e.getMessage());
+        }
+        return "redirect:/order-history";
     }
 
 }

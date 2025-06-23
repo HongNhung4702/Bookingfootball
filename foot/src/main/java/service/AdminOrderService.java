@@ -17,4 +17,8 @@ public class AdminOrderService {
     public List<OrderAdminView> listAllOrders() {
         return orderDao.findAllOrders();
     }
+
+    public List<OrderAdminView> listOrdersByDateFilter(Integer day, Integer month, Integer year) {
+        return orderDao.findOrdersByDateFilter(day, month, year);
+    }
 }

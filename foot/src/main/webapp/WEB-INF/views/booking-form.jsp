@@ -56,7 +56,8 @@
                         <i class="fas fa-calendar-plus"></i> Đặt Sân Bóng
                     </h4>
                 </div>
-                <div class="card-body">                    <form:form action="${pageContext.request.contextPath}/stadiums/${stadium.id}/book" 
+                <div class="card-body">
+                    <form:form action="${pageContext.request.contextPath}/stadiums/${stadium.id}/book" 
                                method="post" modelAttribute="booking" class="needs-validation" novalidate="true">
                         
                         <!-- Ensure ID is null for new booking -->
@@ -80,23 +81,6 @@
                                 </label>
                                 <select class="form-select" id="startTime" name="startTime" required>
                                     <option value="">Chọn giờ</option>
-                                    <option value="06:00">06:00</option>
-                                    <option value="07:00">07:00</option>
-                                    <option value="08:00">08:00</option>
-                                    <option value="09:00">09:00</option>
-                                    <option value="10:00">10:00</option>
-                                    <option value="11:00">11:00</option>
-                                    <option value="12:00">12:00</option>
-                                    <option value="13:00">13:00</option>
-                                    <option value="14:00">14:00</option>
-                                    <option value="15:00">15:00</option>
-                                    <option value="16:00">16:00</option>
-                                    <option value="17:00">17:00</option>
-                                    <option value="18:00">18:00</option>
-                                    <option value="19:00">19:00</option>
-                                    <option value="20:00">20:00</option>
-                                    <option value="21:00">21:00</option>
-                                    <option value="22:00">22:00</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Vui lòng chọn giờ bắt đầu.
@@ -109,23 +93,6 @@
                                 </label>
                                 <select class="form-select" id="endTime" name="endTime" required>
                                     <option value="">Chọn giờ</option>
-                                    <option value="07:00">07:00</option>
-                                    <option value="08:00">08:00</option>
-                                    <option value="09:00">09:00</option>
-                                    <option value="10:00">10:00</option>
-                                    <option value="11:00">11:00</option>
-                                    <option value="12:00">12:00</option>
-                                    <option value="13:00">13:00</option>
-                                    <option value="14:00">14:00</option>
-                                    <option value="15:00">15:00</option>
-                                    <option value="16:00">16:00</option>
-                                    <option value="17:00">17:00</option>
-                                    <option value="18:00">18:00</option>
-                                    <option value="19:00">19:00</option>
-                                    <option value="20:00">20:00</option>
-                                    <option value="21:00">21:00</option>
-                                    <option value="22:00">22:00</option>
-                                    <option value="23:00">23:00</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Vui lòng chọn giờ kết thúc.
@@ -203,34 +170,167 @@
 .fw-bold {
     font-weight: 700 !important;
 }
+
+.time-slot-unavailable {
+    opacity: 0.6;
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
 </style>
 
 <script>
-// Set minimum date to today
 document.addEventListener('DOMContentLoaded', function() {
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('bookingDate').setAttribute('min', today);
+    const bookingDateInput = document.getElementById('bookingDate');
+    const startTimeSelect = document.getElementById('startTime');
+    const endTimeSelect = document.getElementById('endTime');
+    const stadiumId = "${stadium.id}";
     
-    // Form validation
-    const forms = document.querySelectorAll('.needs-validation');
-    Array.prototype.slice.call(forms).forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
+    bookingDateInput.setAttribute('min', today);
+    
+    // Available time slots
+    const timeSlots = [
+        "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00",
+        "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00",
+        "20:00", "21:00", "22:00", "23:00"
+    ];
+
+    let bookedRanges = [];
+
+    // Fetch booked time slots for the selected date
+    async function fetchBookedTimeSlots(date) {
+        try {
+            const response = await fetch(`${pageContext.request.contextPath}/api/bookings/check-availability?stadiumId=${stadiumId}&date=${date}`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching booked time slots:', error);
+            return [];
+        }
+    }
+
+    // Check if a time is within any booked range
+    function isTimeBooked(time) {
+        const t = timeToMinutes(time);
+        return bookedRanges.some(range => t >= range.start && t < range.end);
+    }
+
+    // Convert HH:mm to minutes since midnight
+    function timeToMinutes(t) {
+        const [h, m] = t.split(":").map(Number);
+        return h * 60 + (m || 0);
+    }
+
+    // Update start time options
+    function updateStartTimeOptions() {
+        startTimeSelect.innerHTML = '<option value="">Chọn giờ</option>';
+        timeSlots.forEach(time => {
+            const option = document.createElement('option');
+            option.value = time;
+            option.textContent = time;
+            if (isTimeBooked(time)) {
+                option.disabled = true;
+                option.classList.add('time-slot-unavailable');
+            }
+            startTimeSelect.appendChild(option);
+        });
+        endTimeSelect.innerHTML = '<option value="">Chọn giờ</option>';
+        endTimeSelect.disabled = true;
+    }
+
+    // Update end time options based on start time
+    function updateEndTimeOptions() {
+        const selectedStartTime = startTimeSelect.value;
+        if (!selectedStartTime) {
+            endTimeSelect.innerHTML = '<option value="">Chọn giờ</option>';
+            endTimeSelect.disabled = true;
+            return;
+        }
+
+        const startIndex = timeSlots.indexOf(selectedStartTime);
+        endTimeSelect.innerHTML = '<option value="">Chọn giờ</option>';
+        let foundValidEndTime = false;
+
+        // Tìm giờ kết thúc hợp lệ
+        for (let i = startIndex + 1; i < timeSlots.length; i++) {
+            const currentTime = timeSlots[i];
+            const option = document.createElement('option');
+            option.value = currentTime;
+            option.textContent = currentTime;
             
-            if (startTime && endTime && endTime <= startTime) {
-                event.preventDefault();
-                event.stopPropagation();
-                alert('Giờ kết thúc phải sau giờ bắt đầu!');
-                return false;
+            if (isTimeBooked(currentTime)) {
+                option.disabled = true;
+                option.classList.add('time-slot-unavailable');
+                break;
+            } else {
+                foundValidEndTime = true;
             }
             
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-        }, false);
+            endTimeSelect.appendChild(option);
+        }
+
+        // Enable/disable dropdown giờ kết thúc
+        endTimeSelect.disabled = !foundValidEndTime;
+        if (!foundValidEndTime) {
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = "Không có khung giờ phù hợp";
+            endTimeSelect.innerHTML = '';
+            endTimeSelect.appendChild(option);
+        }
+    }
+
+    // Khi chọn ngày, fetch các khung giờ đã đặt và cập nhật dropdown
+    bookingDateInput.addEventListener('change', async function() {
+        const selectedDate = bookingDateInput.value;
+        if (!selectedDate) {
+            startTimeSelect.innerHTML = '<option value="">Chọn giờ</option>';
+            endTimeSelect.innerHTML = '<option value="">Chọn giờ</option>';
+            startTimeSelect.disabled = true;
+            endTimeSelect.disabled = true;
+            return;
+        }
+
+        startTimeSelect.disabled = true;
+        endTimeSelect.disabled = true;
+        startTimeSelect.innerHTML = '<option value="">Đang tải...</option>';
+        endTimeSelect.innerHTML = '<option value="">Đang tải...</option>';
+
+        const bookedSlots = await fetchBookedTimeSlots(selectedDate);
+        bookedRanges = bookedSlots.map(slot => ({
+            start: timeToMinutes(slot.startTime),
+            end: timeToMinutes(slot.endTime)
+        }));
+
+        startTimeSelect.disabled = false;
+        updateStartTimeOptions();
     });
+
+    // Tự động load bookings khi trang được load (nếu đã có ngày được chọn)
+    if (bookingDateInput.value) {
+        bookingDateInput.dispatchEvent(new Event('change'));
+    }
+
+    // Khi chọn giờ bắt đầu, cập nhật dropdown giờ kết thúc
+    startTimeSelect.addEventListener('change', updateEndTimeOptions);
+
+    // Form validation
+    const form = document.querySelector('.needs-validation');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        const startTime = startTimeSelect.value;
+        const endTime = endTimeSelect.value;
+        if (startTime && endTime && endTime <= startTime) {
+            event.preventDefault();
+            event.stopPropagation();
+            alert('Giờ kết thúc phải sau giờ bắt đầu!');
+            return false;
+        }
+        form.classList.add('was-validated');
+    }, false);
 });
 </script>

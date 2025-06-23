@@ -61,7 +61,7 @@
                                         <td><span class="badge bg-secondary">#${booking.id}</span></td>
                                         <td><strong>${booking.formattedBookingDate}</strong></td>
                                         <td>${booking.formattedStartTime} - ${booking.formattedEndTime}</td>
-                                        <td><span class="badge bg-info">Sân #${booking.stadiumId}</span></td>
+                                        <td><span class="badge bg-info">${stadiumNames[booking.stadiumId]}</span></td>
                                         <td><span class="badge bg-${booking.statusColorClass}">${booking.statusInVietnamese}</span></td>                                        <td>
                                             <c:if test="${booking.canBeCancelled()}">
                                                 <button class="btn btn-outline-danger btn-sm cancel-btn" 

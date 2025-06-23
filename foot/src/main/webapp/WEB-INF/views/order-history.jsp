@@ -10,6 +10,11 @@
                 <h2 class="mb-0">
                     <i class="fas fa-receipt text-primary"></i> Lịch sử đặt hàng
                 </h2>
+                <form method="post" action="${pageContext.request.contextPath}/order-history/delete-all" style="margin:0;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa toàn bộ lịch sử đơn hàng?');">
+                        <i class="fas fa-trash"></i> Xóa toàn bộ lịch sử
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -35,6 +40,7 @@
                                     <th>Size</th>
                                     <th>Số lượng</th>
                                     <th>Tổng tiền</th>
+                                    <th>Xóa</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -48,6 +54,13 @@
                                         <td>${order.size}</td>
                                         <td>${order.quantity}</td>
                                         <td><span class="badge bg-success"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ</span></td>
+                                        <td>
+                                            <form method="post" action="${pageContext.request.contextPath}/order-history/delete/${order.orderId}" style="display:inline;">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này khỏi lịch sử?');">
+                                                    <i class="fas fa-trash"></i> Xóa
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

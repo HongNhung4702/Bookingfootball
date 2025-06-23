@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -51,7 +53,9 @@ public class BookingDao {
     public List<Booking> findByUserId(Long userId) {
         String sql = "SELECT * FROM Booking WHERE user_id = ? ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, new BookingRowMapper(), userId);
-    }    public void save(Booking booking) {
+    }
+
+    public void save(Booking booking) {
         // Check if this is a new booking (ID is null or 0)
         if (booking.getId() == null || booking.getId() == 0) {
             String sql = "INSERT INTO Booking (user_id, stadium_id, booking_date, start_time, end_time, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -123,5 +127,25 @@ public class BookingDao {
                     rs.getString("address")
             };
         }, status.name());
+    }
+
+    public List<Booking> findOverlappingBookings(Long stadiumId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        String sql = "SELECT * FROM Booking WHERE stadium_id = ? AND booking_date = ? " +
+                    "AND status != 'CANCELLED' " +
+                    "AND ((start_time < ? AND end_time > ?) " +  // Existing booking overlaps with new start time
+                    "OR (start_time < ? AND end_time > ?) " +    // Existing booking overlaps with new end time
+                    "OR (start_time >= ? AND end_time <= ?))";   // Existing booking is within new time range
+
+        return jdbcTemplate.query(sql, new BookingRowMapper(),
+                stadiumId, date,
+                endTime, startTime,    // Check start time overlap
+                endTime, endTime,      // Check end time overlap
+                startTime, endTime     // Check contained bookings
+        );
+    }
+
+    public List<Booking> findBookingsByStadiumAndDate(Long stadiumId, LocalDate date) {
+        String sql = "SELECT * FROM Booking WHERE stadium_id = ? AND booking_date = ? AND status != 'CANCELLED' ORDER BY start_time";
+        return jdbcTemplate.query(sql, new BookingRowMapper(), stadiumId, date);
     }
 }

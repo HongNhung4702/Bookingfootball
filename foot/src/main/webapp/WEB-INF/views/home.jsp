@@ -27,6 +27,13 @@
         <!-- Cột phải: danh sách sản phẩm -->
         <div class="col-md-9">
             <h2 class="mb-3">Sản phẩm</h2>
+            <!-- Form tìm kiếm sản phẩm -->
+            <form class="mb-4" method="get" action="home">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Tìm kiếm sản phẩm theo tên..." value="${search != null ? search : ''}" />
+                    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                </div>
+            </form>
             <div class="row">
                 <c:forEach var="product" items="${products}">
                     <div class="col-lg-4 col-md-6 mb-4">

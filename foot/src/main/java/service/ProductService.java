@@ -76,4 +76,8 @@ public class ProductService {
         }
         return excludeId == null || !existing.getId().equals(excludeId);
     }
+
+    public List<Product> searchProductsByName(String keyword) {
+        return productDao.searchByName(keyword);
+    }
 }

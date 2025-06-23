@@ -74,4 +74,10 @@ public class ProductDao {
         String sql = "SELECT * FROM Product WHERE stock <= ? AND is_active = TRUE ORDER BY stock ASC";
         return jdbcTemplate.query(sql, new ProductRowMapper(), threshold);
     }
+
+    public List<Product> searchByName(String keyword) {
+        String sql = "SELECT * FROM Product WHERE is_active = TRUE AND LOWER(name) LIKE ? ORDER BY created_at DESC";
+        String likePattern = "%" + keyword.toLowerCase() + "%";
+        return jdbcTemplate.query(sql, new ProductRowMapper(), likePattern);
+    }
 }

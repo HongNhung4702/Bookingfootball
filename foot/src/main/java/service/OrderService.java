@@ -77,4 +77,12 @@ public class OrderService {
     public List<UserOrderView> getUserOrderHistory(Long userId) {
         return orderDao.findUserOrderViewsByUserId(userId);
     }
+
+    public void deleteOrderForUser(Long orderId, Long userId) {
+        orderDao.markUserDeleted(orderId, userId);
+    }
+
+    public void deleteAllOrdersForUser(Long userId) {
+        orderDao.markAllUserDeleted(userId);
+    }
 }

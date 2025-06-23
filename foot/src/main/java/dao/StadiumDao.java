@@ -48,7 +48,7 @@ public class StadiumDao {
     }
 
     public List<Stadium> findAll() {
-        String sql = "SELECT * FROM Stadium WHERE is_active = TRUE ORDER BY created_at DESC";
+        String sql = "SELECT * FROM Stadium WHERE is_active = TRUE ORDER BY id DESC";
         return jdbcTemplate.query(sql, new StadiumRowMapper());
     }
 

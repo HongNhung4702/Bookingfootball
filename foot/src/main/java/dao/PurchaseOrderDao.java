@@ -48,7 +48,7 @@ public class PurchaseOrderDao {
     }
 
     public List<PurchaseOrder> findByUserId(Long userId) {
-        String sql = "SELECT * FROM purchaseorder WHERE user_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT * FROM purchaseorder WHERE user_id = ? AND (user_deleted IS NULL OR user_deleted = FALSE) ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, new RowMapper<PurchaseOrder>() {
             @Override
             public PurchaseOrder mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -74,7 +74,7 @@ public class PurchaseOrderDao {
                      "FROM purchaseorder po " +
                      "JOIN orderdetail od ON po.id = od.purchase_order_id " +
                      "JOIN product p ON od.product_id = p.id " +
-                     "WHERE po.user_id = ? ORDER BY po.created_at DESC";
+                     "WHERE po.user_id = ? AND (po.user_deleted IS NULL OR po.user_deleted = FALSE) ORDER BY po.created_at DESC";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             UserOrderView view = new UserOrderView();
@@ -90,5 +90,15 @@ public class PurchaseOrderDao {
             view.setTotalAmount(rs.getBigDecimal("unit_price").multiply(java.math.BigDecimal.valueOf(rs.getInt("quantity"))));
             return view;
         }, userId);
+    }
+
+    public void markUserDeleted(Long orderId, Long userId) {
+        String sql = "UPDATE purchaseorder SET user_deleted = TRUE WHERE id = ? AND user_id = ?";
+        jdbcTemplate.update(sql, orderId, userId);
+    }
+
+    public void markAllUserDeleted(Long userId) {
+        String sql = "UPDATE purchaseorder SET user_deleted = TRUE WHERE user_id = ?";
+        jdbcTemplate.update(sql, userId);
     }
 }
