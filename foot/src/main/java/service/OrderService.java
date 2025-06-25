@@ -40,7 +40,7 @@ public class OrderService {
         BigDecimal unitPrice = BigDecimal.valueOf(product.getPrice());
         BigDecimal totalAmount = unitPrice.multiply(BigDecimal.valueOf(quantity));
 
-        // --- tạo PurchaseOrder ---
+        // --- tạo đối tượng PurchaseOrder ---
         PurchaseOrder order = new PurchaseOrder();
         order.setUserId(user.getId());
         order.setShippingName(shippingName);
@@ -51,14 +51,14 @@ public class OrderService {
         order.setPaymentStatus("UNPAID");
         order.setCreatedAt(LocalDateTime.now());
 
-        // --- lưu & lấy ID ---
+        // --- lưu & lấy ID PurchaseOrderDao ---
         Long orderId = orderDao.create(order);
         order.setId(orderId);
 
         // --- giảm stock ---
         productDao.updateStock(product.getId(), product.getStock() - quantity);
 
-        // --- lưu OrderDetail ---
+        // --- Tạo & lưu OrderDetail ---
         OrderDetail detail = new OrderDetail();
         detail.setPurchaseOrderId(orderId);
         detail.setProductId(product.getId());

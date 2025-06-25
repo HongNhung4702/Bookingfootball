@@ -36,9 +36,20 @@ public class ProductDao {
             }
             return product;
         }
-    }    public List<Product> findAll() {
+    }   
+    public List<Product> findAll() {
         String sql = "SELECT * FROM Product WHERE is_active = TRUE ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, new ProductRowMapper());
+    }
+    public List<Product> searchByName(String keyword) {
+        String sql = "SELECT * FROM Product WHERE is_active = TRUE AND LOWER(name) LIKE ? ORDER BY created_at DESC";
+        String likePattern = "%" + keyword.toLowerCase() + "%";
+        return jdbcTemplate.query(sql, new ProductRowMapper(), likePattern);
+    }
+
+    public List<Product> findByCategoryId(Long categoryId) {
+        String sql = "SELECT * FROM Product WHERE category_id = ? AND is_active = TRUE ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, new ProductRowMapper(), categoryId);
     }
 
     public Product findById(Long id) {
@@ -46,11 +57,8 @@ public class ProductDao {
         List<Product> products = jdbcTemplate.query(sql, new ProductRowMapper(), id);
         return products.isEmpty() ? null : products.get(0);
     }
-
-    public List<Product> findByCategoryId(Long categoryId) {
-        String sql = "SELECT * FROM Product WHERE category_id = ? AND is_active = TRUE ORDER BY created_at DESC";
-        return jdbcTemplate.query(sql, new ProductRowMapper(), categoryId);
-    }    public void save(Product product) {
+    
+    public void save(Product product) {
         if (product.getId() == null) {
             String sql = "INSERT INTO Product (name, description, price, stock, category_id, image_url, created_at, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql, product.getName(), product.getDescription(), product.getPrice(), 
@@ -60,7 +68,8 @@ public class ProductDao {
             jdbcTemplate.update(sql, product.getName(), product.getDescription(), product.getPrice(), 
                               product.getStock(), product.getCategoryId(), product.getImageUrl(), product.isActive(), product.getId());
         }
-    }    public void deleteById(Long id) {
+    }    
+    public void deleteById(Long id) {
         String sql = "UPDATE Product SET is_active = FALSE WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
@@ -75,9 +84,5 @@ public class ProductDao {
         return jdbcTemplate.query(sql, new ProductRowMapper(), threshold);
     }
 
-    public List<Product> searchByName(String keyword) {
-        String sql = "SELECT * FROM Product WHERE is_active = TRUE AND LOWER(name) LIKE ? ORDER BY created_at DESC";
-        String likePattern = "%" + keyword.toLowerCase() + "%";
-        return jdbcTemplate.query(sql, new ProductRowMapper(), likePattern);
-    }
+    
 }

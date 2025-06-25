@@ -25,7 +25,8 @@ public class CategoryDao {
             category.setDescription(rs.getString("description"));
             return category;
         }
-    }    public List<Category> findAll() {
+    }   
+    public List<Category> findAll() {
         String sql = "SELECT * FROM Category ORDER BY name";
         return jdbcTemplate.query(sql, new CategoryRowMapper());
     }
@@ -40,7 +41,8 @@ public class CategoryDao {
         String sql = "SELECT * FROM Category WHERE name = ?";
         List<Category> categories = jdbcTemplate.query(sql, new CategoryRowMapper(), name);
         return categories.isEmpty() ? null : categories.get(0);
-    }    public void save(Category category) {
+    }
+    public void save(Category category) {
         if (category.getId() == null) {
             String sql = "INSERT INTO Category (name, description) VALUES (?, ?)";
             jdbcTemplate.update(sql, category.getName(), category.getDescription());

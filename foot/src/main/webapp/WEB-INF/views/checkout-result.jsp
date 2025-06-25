@@ -4,7 +4,7 @@
 
 <div class="container mt-4">
     <div class="alert alert-success">
-        <h4 class="alert-heading">Thanh toán thành công!</h4>
+        <h4 class="alert-heading">Đặt hàng thành công!</h4>
         <p>Đơn hàng của bạn đã được ghi nhận:</p>
         <hr>
         <p><strong>Mã đơn:</strong> <span class="text-primary">${order.id}</span></p>

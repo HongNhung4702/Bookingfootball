@@ -18,17 +18,27 @@ public class ProductService {
     @Autowired
     private CategoryDao categoryDao;
 
+    public List<Category> getAllCategories() {
+        return categoryDao.findAll();
+    }
+
     public List<Product> getAllProducts() {
         return productDao.findAll();
     }
+
+    public List<Product> searchProductsByName(String keyword) {
+        return productDao.searchByName(keyword);
+    }
+
+    public List<Product> getProductsByCategory(Long categoryId) {
+        return productDao.findByCategoryId(categoryId);
+    }  
 
     public Product getProductById(Long id) {
         return productDao.findById(id);
     }
 
-    public List<Product> getProductsByCategory(Long categoryId) {
-        return productDao.findByCategoryId(categoryId);
-    }    public void saveProduct(Product product) {
+    public void saveProduct(Product product) {
         // Validate that name is not null or empty
         if (product.getName() == null || product.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Product name cannot be null or empty");
@@ -47,10 +57,6 @@ public class ProductService {
 
     public List<Product> getLowStockProducts(int threshold) {
         return productDao.findLowStockProducts(threshold);
-    }
-
-    public List<Category> getAllCategories() {
-        return categoryDao.findAll();
     }
 
     public Category getCategoryById(Long id) {
@@ -77,7 +83,5 @@ public class ProductService {
         return excludeId == null || !existing.getId().equals(excludeId);
     }
 
-    public List<Product> searchProductsByName(String keyword) {
-        return productDao.searchByName(keyword);
-    }
+   
 }
