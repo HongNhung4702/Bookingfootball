@@ -113,10 +113,10 @@
                         </c:choose>
                     </td>
                     <td>
-                        <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="$"/>
+                        <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ
                     </td>
                     <td>
-                        <fmt:formatNumber value="${productValue}" type="currency" currencySymbol="$"/>
+                        <fmt:formatNumber value="${productValue}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ
                     </td>
                     <td>
                         <button type="button" class="btn btn-sm btn-outline-primary" 
@@ -130,7 +130,7 @@
         <tfoot>
             <tr class="table-info">
                 <th colspan="6" class="text-end">Total Inventory Value:</th>
-                <th><fmt:formatNumber value="${totalValue}" type="currency" currencySymbol="$"/></th>
+                <th><fmt:formatNumber value="${totalValue}" type="currency" currencySymbol="" minFractionDigits="0"/> VNĐ</th>
                 <th></th>
             </tr>
         </tfoot>
